@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random distributions of medical Interns</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Random distribution of medical interns</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="interns_file">Interns File:</label>
+        <input type="file" id="interns_file" name="interns_file" required><br><br>
+        <label for="facilities_file">Facilities File:</label>
+        <input type="file" id="facilities_file" name="facilities_file" required><br><br>
+        <button type="submit">Upload and Distribute</button>
+    </form>
+</body>
+</html>
