@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, send_file
 import pandas as pd
 import random
 import os
+from openpyxl import load_workbook
 
 app = Flask(__name__)
 
@@ -35,9 +36,15 @@ def upload_file():
         # Distribution logic
         assigned_df = distribute_interns(interns_df, facilities)
 
+        # Sort the assigned dataframe by 'Internship Center' column
+        sorted_df = assigned_df.sort_values(by=['Internship Center'])
+
         # Save the output
-        output_file = 'assigned_interns.xlsx'
-        assigned_df.to_excel(output_file, index=False)
+        output_file = 'assigned_interns_sorted.xlsx'
+        sorted_df.to_excel(output_file, index=False)
+
+        # Adjust column widths
+        adjust_column_widths(output_file)
 
         return send_file(output_file, as_attachment=True)
     
@@ -69,6 +76,28 @@ def distribute_interns(interns_df, facilities_df):
                 facilities.remove(chosen_facility)
 
     return interns_df
+
+def adjust_column_widths(file_path):
+    # Load the workbook and select the active sheet
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    # Set the width of each column to be adequate for its content
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter  # Get the column name
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[column].width = adjusted_width
+
+    # Save the workbook
+    wb.save(file_path)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
